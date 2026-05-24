@@ -1,0 +1,37 @@
+name: Daily Bank Sync
+
+on:
+  schedule:
+    # This cron schedule runs at 12:00 AM IST automatically
+    - cron: '30 18 * * *'
+  workflow_dispatch: # This allows you to click a "Run" button manually to test it
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Reconstruct Gmail Tokens
+        env:
+          GMAIL_CREDENTIALS_B64: ${{ secrets.GMAIL_CREDENTIALS_B64 }}
+          GMAIL_TOKEN_B64: ${{ secrets.GMAIL_TOKEN_B64 }}
+        run: |
+          echo "$GMAIL_CREDENTIALS_B64" | base64 -d > credentials.json
+          echo "$GMAIL_TOKEN_B64" | base64 -d > token.json
+
+      - name: Fetch and Process Transactions
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python llm_integration.py
