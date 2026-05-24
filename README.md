@@ -34,6 +34,39 @@ An automated, cloud-hosted dashboard that intelligently tracks expenses. It read
 * **Database:** Supabase (PostgreSQL), `psycopg2`, SQLAlchemy
 * **APIs:** Gmail API (`google-api-python-client`)
 
+## 🔑 Prerequisites & API Keys
+
+Before running the app, you need to gather three credentials. Here is exactly how to get them:
+
+### 1. Supabase Database URL
+1. Go to [Supabase](https://supabase.com/) and create a free project.
+2. Create a database password and save it somewhere safe.
+3. In your Supabase dashboard, go to **Settings** (gear icon on the bottom left) > **Database**.
+4. Scroll down to the **Connection Pooler** section.
+5. Ensure the port is set to `6543` and copy the connection string. It will look like this:
+   `postgresql://postgres.xxx:[YOUR-PASSWORD]@aws-0-xx.pooler.supabase.com:6543/postgres`
+6. Replace `[YOUR-PASSWORD]` with your actual password (removing the brackets).
+
+### 2. Google Gemini API Key
+1. Go to [Google AI Studio](https://aistudio.google.com/).
+2. Sign in with your Google account.
+3. Click **Get API key** in the left menu.
+4. Click **Create API key** and copy the generated string.
+
+### 3. Gmail API Credentials (`credentials.json`)
+*(This is required to let the Python script read your bank emails).*
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project.
+3. Search for the **Gmail API** in the top search bar and click **Enable**.
+4. Go to **APIs & Services > OAuth consent screen**. Select **External**, fill in the required app name and email fields, and add your own email address as a "Test user".
+5. Go to **APIs & Services > Credentials**.
+6. Click **+ Create Credentials > OAuth client ID**.
+7. Choose **Desktop app** as the application type and click Create.
+8. Click the **Download JSON** button. 
+9. Rename the downloaded file to exactly `credentials.json` and place it in the root folder of this project.
+
+---
+
 ## 🚀 Local Setup
 
 1. **Clone the repository:**
