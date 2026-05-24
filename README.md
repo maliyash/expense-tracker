@@ -73,3 +73,20 @@ Before running the app, you need to gather three credentials. Here is exactly ho
    ```bash
    git clone [https://github.com/maliyash/expense-tracker.git](https://github.com/maliyash/expense-tracker.git)
    cd expense-tracker
+
+## ⚙️ Environment Variables
+
+To run this project locally on your machine, you need to create a file named exactly `.env` in the root folder of the project. 
+
+Copy the template below and replace the placeholder values with the actual keys you gathered in the previous step.
+
+**`.env` file structure:**
+```env
+# Your Supabase Connection Pooler URL (must end in 6543)
+DATABASE_URL=postgresql://postgres.xxx:YOUR_PASSWORD@aws-0-xx.pooler.supabase.com:6543/postgres
+
+# Your Google Gemini API Key
+GEMINI_API_KEY=AIzaSyYourSecretKeyGoesHere
+
+# A custom password you create to lock your local dashboard
+APP_PASSWORD=your_secret_password
