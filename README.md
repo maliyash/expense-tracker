@@ -14,15 +14,18 @@ An automated, cloud-hosted dashboard that intelligently tracks expenses. It read
 
 ### 📊 Main Dashboard
 *(Visualizing spending trends and category breakdowns)*
-![Dashboard](assets/dashboard.png)
+<img width="1677" height="902" alt="image" src="https://github.com/user-attachments/assets/76ce92e2-83ed-46ab-9ca4-617b9ce74482" />
+
 
 ### 📝 Editable Ledger
 *(Updating database records directly from the UI)*
-![Ledger](assets/ledger.png)
+<img width="1391" height="861" alt="image" src="https://github.com/user-attachments/assets/b2689a7c-32f7-438e-b192-8a63ecf70cd0" />
+
 
 ### 🔒 Secure Login
 *(Session-state password protection)*
-![Login](assets/login.png)
+<img width="1391" height="861" alt="image" src="https://github.com/user-attachments/assets/c96e9c3c-02e3-4116-b09e-7c8c147c7f60" />
+
 
 ## 🛠️ Tech Stack
 * **Frontend/UI:** Streamlit, Pandas, Plotly Express
