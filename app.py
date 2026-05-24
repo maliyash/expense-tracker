@@ -7,8 +7,61 @@ import psycopg2
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 
+load_dotenv()
+
 # --- Configuration & Styling ---
 st.set_page_config(page_title="Expense Tracker", page_icon="💳", layout="wide")
+
+
+# --- Security / Authentication ---
+def check_password():
+    """Returns True if the user entered the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        # Fallback to .env for local testing, otherwise use Streamlit Secrets
+        correct_password = os.getenv("APP_PASSWORD")
+        try:
+            if "APP_PASSWORD" in st.secrets:
+                correct_password = st.secrets["APP_PASSWORD"]
+        except (KeyError, FileNotFoundError):
+            pass
+
+        if st.session_state["password"] == correct_password:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't keep the password in memory
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run: Show the login screen
+        st.markdown("<h2 style='text-align: center; margin-top: 100px;'>🔒 Secure Login</h2>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.text_input("Enter Dashboard Password", type="password", on_change=password_entered, key="password")
+        return False
+
+    elif not st.session_state["password_correct"]:
+        # Incorrect password: Show login screen + error message
+        st.markdown("<h2 style='text-align: center; margin-top: 100px;'>🔒 Secure Login</h2>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.text_input("Enter Dashboard Password", type="password", on_change=password_entered, key="password")
+            st.error("😕 Password incorrect. Please try again.")
+        return False
+
+    else:
+        # Password correct
+        return True
+
+
+# STOP EXECUTION if the user is not authenticated
+if not check_password():
+    st.stop()
+
+# ==========================================
+# --- THE REST OF YOUR APP STARTS HERE ---
+# ==========================================
 
 # Customizing the top header
 st.markdown("""
@@ -18,11 +71,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Database Setup & Connection ---
-load_dotenv()
+
 
 # Smart loading: Checks Streamlit secrets first (for cloud deployment), then local .env
 try:
-    DATABASE_URL = st.secrets["DATABASE_URL"]
+    if "DATABASE_URL" in st.secrets:
+        DATABASE_URL = st.secrets["DATABASE_URL"]
+    else:
+        DATABASE_URL = os.getenv("DATABASE_URL")
 except (KeyError, FileNotFoundError):
     DATABASE_URL = os.getenv("DATABASE_URL")
 
