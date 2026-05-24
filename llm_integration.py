@@ -15,6 +15,7 @@ from googleapiclient.discovery import build
 from google import genai
 from google.genai import types
 from google.genai.errors import APIError
+from datetime import datetime, timedelta
 
 # Load environment variables (Supabase URL and Gemini Key)
 load_dotenv()
@@ -171,12 +172,19 @@ def main():
     init_db()
     service = get_gmail_service()
 
-    query = build_gmail_query(BANK_CONFIGS, "2026/04/30", "2026/06/01")
+    # Generate dynamic dates: Look back 3 days, look forward 1 day (to ensure today is fully included)
+    today = datetime.now()
+    start_date_str = (today - timedelta(days=3)).strftime('%Y/%m/%d')
+    end_date_str = (today + timedelta(days=1)).strftime('%Y/%m/%d')
+
+    print(f"Searching Gmail from {start_date_str} to {end_date_str}...")
+
+    query = build_gmail_query(BANK_CONFIGS, start_date_str, end_date_str)
     results = service.users().messages().list(userId='me', q=query, maxResults=100).execute()
     messages = results.get('messages', [])
 
     if not messages:
-        print("No May transactions located.")
+        print("No recent transactions located.")
         return
 
     print(f"Syncing {len(messages)} transaction rows to Supabase using Gemini 2.5 Flash...")
@@ -201,7 +209,8 @@ def main():
             dt_obj = parsedate_to_datetime(date_header)
             sql_safe_date = dt_obj.strftime('%Y-%m-%d %H:%M:%S')
         except Exception:
-            sql_safe_date = "2026-05-01 00:00:00"
+            # Fallback to current time if email date parsing fails
+            sql_safe_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         try:
             parsed_data = extract_transaction_info_with_retry(snippet, subject, bank_hint, clean_email)
